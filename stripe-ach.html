@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SwirePay - ACH Debit</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont;text-align:center;padding:4rem}
+    #pay-btn{background:#00D395;color:#fff;border:0;padding:12px 24px;border-radius:4px;font-size:16px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <h2>Pay by Bank - $50</h2>
+  <button id="pay-btn">Instant ACH Debit</button>
+
+  <script>
+    const stripe = Stripe('pk_live_51QNFK2LM6tXnTUcN4j5w8fXg7HLsTOpPvMa2RnK1mNO9xAyQqE8r3tYy5zU6vP1w2iJ9kLOn');
+    document.getElementById('pay-btn').onclick = async () => {
+      const {error} = await stripe.redirectToCheckout({
+        lineItems:[{
+          price_data:{
+            currency:'usd',
+            product_data:{name:'SwirePay Invoice'},
+            unit_amount:5000, // 50 USD
+          },
+          quantity:1
+        }],
+        mode:'payment',
+        successUrl:'https://payssk-creator.github.io/swirepay-demo/success.html',
+        cancelUrl: 'https://payssk-creator.github.io/swirepay-demo/cancel.html',
+        payment_method_types:['us_bank_account'] // 只开 ACH
+      });
+      if(error) alert(error.message);
+    };
+  </script>
+</body>
+</html>
