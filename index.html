@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <title>SwirePay – Simple Global Payments</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="UTF-8">
+  <title>SwirePay - ACH Debit</title>
+  <script src="https://js.stripe.com/v3/"></script>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-    header,footer{background:#0B1C2F;color:#fff;text-align:center;padding:2rem 1rem;}
-    main{padding:4rem 1rem;max-width:900px;margin:auto;text-align:center;}
-    h1{font-size:2.2rem;margin-bottom:1rem;}
-    .cta{display:inline-block;background:#00D395;color:#fff;padding:.8rem 1.6rem;border-radius:4px;text-decoration:none;margin-top:1.2rem;}
-    footer p{font-size:.8rem;opacity:.7;}
+    body{font-family:-apple-system,BlinkMacSystemFont;text-align:center;padding:4rem}
+    #pay-btn{background:#00D395;color:#fff;border:0;padding:12px 24px;border-radius:4px;font-size:16px;cursor:pointer}
   </style>
 </head>
 <body>
-  <header>
-    <h1>SwirePay</h1>
-    <p>Zero-fee global payment collection for ambitious businesses.</p>
-  </header>
+  <h2>Pay by Bank - $50</h2>
+  <button id="pay-btn">Instant ACH Debit</button>
 
-  <main>
-    <h2>Coming Soon</h2>
-    <p>We’re putting the finishing touches on our new platform — check back in 72 h.</p>
-    <a class="cta" href="mailto:hello@swirepay.com">Get Early Access</a>
-  </main>
-
-  <footer>
-    <p>© 2025 SwirePay. All rights reserved. Powered by Kimi-K2</p>
-  </footer>
+  <script>
+    const stripe = Stripe('pk_live_51QNFK2LM6tXnTUcN4j5w8fXg7HLsTOpPvMa2RnK1mNO9xAyQqE8r3tYy5zU6vP1w2iJ9kLOn');
+    document.getElementById('pay-btn').onclick = async () => {
+      const {error} = await stripe.redirectToCheckout({
+        lineItems:[{
+          price_data:{
+            currency:'usd',
+            product_data:{name:'SwirePay Invoice'},
+            unit_amount:5000, // 50 USD
+          },
+          quantity:1
+        }],
+        mode:'payment',
+        successUrl:'https://paysssk-creator.github.io/swirepay-demo/success.html',
+        cancelUrl: 'https://paysssk-creator.github.io/swirepay-demo/cancel.html',
+        payment_method_types:['us_bank_account'] // 只开 ACH
+      });
+      if(error) alert(error.message);
+    };
+  </script>
+</body>
 </html>
